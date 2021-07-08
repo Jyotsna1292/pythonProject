@@ -1,0 +1,40 @@
+
+import pandas as pd
+pd.set_option("display.max_rows", None, "display.max_columns", None)
+Data = pd.read_csv("C:/Users/yacca/Downloads/swiggy_cv_pending.csv")
+# print(Data.head(5))
+import numpy as np
+
+from datetime import date
+today = date.today()
+# print(today)
+
+Data['created_date'] = pd.to_datetime(Data['created_date'])
+Data['created_date'] = Data['created_date'].dt.date
+Data['current_date'] = date.today()
+Data['Days_diff'] = (Data['current_date'] - Data['created_date'])/np.timedelta64(1,'D')
+print(Data)
+#print(Data.head(5))
+df = Data.groupby('wall_id')['app_id'].count()
+# print(df)
+def func(col):
+    if col["Days_diff"] <= 7:
+        val= "Appln_last_week"
+    elif col["Days_diff"] <= 30:
+        val= "Appln_last_month"
+    elif col["Days_diff"] <= 90:
+        val= "Appln_last_quarter"
+    elif col["Days_diff"] <= 365:
+        val= "Appln_last_year"
+    else:
+        val= "older_than_year"
+    return val
+
+Data['period_flag']=Data.apply(func,axis=1)
+#print(Data)
+#print(Data.groupby(['wall_id','period_flag'])['app_id'].count())
+
+pivot_data = Data.pivot_table(index='wall_id',columns='period_flag',values='app_id',aggfunc='count')
+print(pivot_data)
+
+
