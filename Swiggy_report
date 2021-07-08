@@ -32,7 +32,7 @@ def func(col):
 
 Data['period_flag']=Data.apply(func,axis=1)
 #print(Data)
-#print(Data.groupby(['wall_id','period_flag'])['app_id'].count())
+##print(Data.groupby(['wall_id','period_flag'])['app_id'].count())
 
 pivot_data = Data.pivot_table(index='wall_id',columns='period_flag',values='app_id',aggfunc='count')
 print(pivot_data)
